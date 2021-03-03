@@ -3,6 +3,7 @@ from requests_oauthlib import OAuth1Session
 
 from osometweet.rate_limit_manager import manage_rate_limits
 
+
 class OAuthHandler:
     def __init__(self):
         pass
@@ -48,7 +49,6 @@ class OAuth1a(OAuthHandler):
         access_token: str = "",
         access_token_secret: str = "",
         manage_rate_limits: bool = True
-
     ) -> None:
         self._api_key = api_key
         self._api_key_secret = api_key_secret
@@ -65,24 +65,25 @@ class OAuth1a(OAuthHandler):
         Raises:
             - Exception, ValueError
         """
-        for key_name in ['api_key', 'api_key_secret', 'access_token', 'access_token_secret']:
-            if not isinstance(getattr(self, '_' + key_name), str):
+        for key_name in [
+            "api_key",
+            "api_key_secret",
+            "access_token",
+            "access_token_secret",
+        ]:
+            if not isinstance(getattr(self, "_" + key_name), str):
                 raise ValueError(
                     f"Invalid type for parameter {key_name}, must be a string."
-                    )
+                )
         # Get oauth object
         self._oauth_1a = OAuth1Session(
             self._api_key,
-            client_secret = self._api_key_secret,
-            resource_owner_key = self._access_token,
-            resource_owner_secret = self._access_token_secret
-            )
+            client_secret=self._api_key_secret,
+            resource_owner_key=self._access_token,
+            resource_owner_secret=self._access_token_secret,
+        )
 
-    def make_request(
-        self,
-        url: str,
-        payload: dict
-       ) -> requests.models.Response:
+    def make_request(self, url: str, payload: dict) -> requests.models.Response:
         """
         Method to make the http request to Twitter API
 
@@ -129,6 +130,7 @@ class OAuth2(OAuthHandler):
             - https://developer.twitter.com/en/docs/authentication/oauth-2-0
 
     """
+
     def __init__(
         self,
         bearer_token: str = "",
@@ -155,9 +157,7 @@ class OAuth2(OAuthHandler):
             )
 
     def make_request(
-        self,
-        url: str,
-        payload: dict
+        self, url: str, payload: dict, stream: bool = False
     ) -> requests.models.Response:
         """
         Method to make the http request to Twitter API
@@ -171,7 +171,8 @@ class OAuth2(OAuthHandler):
         response = requests.get(
             url,
             headers=self._header,
-            params=payload
+            params=payload,
+            stream=stream
             )
 
         # If requested, manage rate limits
